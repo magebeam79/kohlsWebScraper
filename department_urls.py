@@ -1,0 +1,11 @@
+departments = [
+    {'name': 'accessories', 'url': 'https://www.kohls.com/catalog/clearance-accessories.jsp?CN=Promotions:Clearance+Department:Accessories&kls_sbp=90595572255358814293312850185484413129&pfm=browse%20refine&PPP=48&S=7&sks=true'},
+    {'name': 'beauty', 'url': 'https://www.kohls.com/catalog/clearance-beauty.jsp?CN=Promotions:Clearance+Department:Beauty&kls_sbp=90595572255358814293312850185484413129&pfm=browse%20refine&PPP=48&S=7&sks=true'},
+    {'name': 'bed-bath', 'url': 'https://www.kohls.com/catalog/clearance-bed-bath.jsp?CN=Promotions:Clearance+Department:Bed%20%26%20Bath&pfm=browse%20refine&kls_sbp=90595572255358814293312850185484413129&PPP=48&S=7&sks=true'},
+    {'name': 'health', 'url': 'https://www.kohls.com/catalog/clearance-health-personal-care.jsp?CN=Promotions:Clearance+Department:Health%20%26%20Personal%20Care&pfm=browse%20refine&kls_sbp=90595572255358814293312850185484413129&PPP=48&S=7&sks=true'},
+    {'name': 'home', 'url': 'https://www.kohls.com/catalog/clearance-home-decor.jsp?CN=Promotions:Clearance+Department:Home%20Decor&kls_sbp=90595572255358814293312850185484413129&pfm=browse%20refine&PPP=48&S=7&sks=true'},
+    {'name': 'kitchen', 'url': 'https://www.kohls.com/catalog/clearance-kitchen-dining.jsp?CN=Promotions:Clearance+Department:Kitchen%20%26%20Dining&pfm=browse%20refine&kls_sbp=90595572255358814293312850185484413129&PPP=48&S=7&sks=true'},
+    {'name': 'sports', 'url': 'https://www.kohls.com/catalog/clearance-sports-fitness.jsp?CN=Promotions:Clearance+Department:Sports%20%26%20Fitness&pfm=browse%20refine&kls_sbp=90595572255358814293312850185484413129&PPP=48&S=7&sks=true'},
+    {'name': 'shoes', 'url': 'https://www.kohls.com/catalog/clearance-shoes.jsp?CN=Promotions:Clearance+Department:Shoes&kls_sbp=90595572255358814293312850185484413129&pfm=browse%20refine&PPP=48&S=7&sks=true'},
+    {'name': 'toys', 'url': 'https://www.kohls.com/catalog/sale-toys.jsp?CN=Promotions:Clearance+Promotions:Sale+Department:Toys&BL=y&pfm=browse%20refine&kls_sbp=05834574949241830242529155580587980870&PPP=48&S=7&sks=true'},
+]
