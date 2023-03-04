@@ -110,7 +110,7 @@ def scrape_kohls():
                 if percentage_discount >= 70:
                     orig_price_formatted = "${:.2f}".format(original_price)
                     sale_price_formatted = "${:.2f}".format(sale_price)
-                    discount_formatted = "{:.0%}".format(percentage_discount)
+                    discount_formatted = "{:.0%}".format(percentage_discount/100)
                     data_dict = {'Department': department['name'],
                                  'Product Name': title,
                                  'Orig Price': orig_price_formatted,
