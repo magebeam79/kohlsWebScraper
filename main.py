@@ -33,13 +33,13 @@ to_number = os.environ.get('PHONE_NUMBER')
 sender_email = os.environ.get('EMAIL_ADDRESS')
 receiver_email = os.environ.get('RECEIVER_ADDRESS')
 subject = 'Kohls Clearance Data'
-body = 'Please find attached the Kohls Clearance data.'
-password = os.environ.get('SECRET_KEY')
+email_body = 'Please find attached the Kohls Clearance data.'
+email_password = os.environ.get('SECRET_KEY')
 
 
 def main():
-    kohls_csv = scrape_kohls()
-    send_email(kohls_csv)
+    kohls_clearance_csv = scrape_kohls()
+    send_email(kohls_clearance_csv)
 
 
 def send_sms_alert(title, department_name, original_price, sale_price, percentage_discount):
@@ -47,12 +47,12 @@ def send_sms_alert(title, department_name, original_price, sale_price, percentag
     client = Client(account_sid, auth_token)
 
     # Construct the message to send
-    message = f"New deal alert: {title} in {department_name} is now {percentage_discount}% off! " \
-              f"Original price: {original_price}, sale price: {sale_price}."
+    sms_message = f"New deal alert: {title} in {department_name} is now {percentage_discount}% off! " \
+                  f"Original price: {original_price}, sale price: {sale_price}."
 
     # Send the message
     message = client.messages.create(
-        body=message,
+        body=sms_message,
         from_=from_number,
         to=to_number
     )
@@ -67,7 +67,7 @@ def scrape_kohls():
 
     for department in departments:
         print(f"Scraping department: {department['name']}")
-        department_data = []
+        department_products = []
 
         for page in range(1, max_pages+1):
             if page == 1:
@@ -116,10 +116,10 @@ def scrape_kohls():
                                  'Orig Price': orig_price_formatted,
                                  'Sale Price': sale_price_formatted,
                                  'Discount': discount_formatted}
-                    department_data.append(data_dict)
+                    department_products.append(data_dict)
 
-                next_link = soup.find('a', {'class': 'ce-pgntn'})
-                if not next_link:
+                next_page = soup.find('a', {'class': 'ce-pgntn'})
+                if not next_page:
                     break
                 page += 1
                 if page == 2:
@@ -129,18 +129,20 @@ def scrape_kohls():
 
             time.sleep(1)
 
-        print(f"Finished {department['name']}")
-        data_frames.append(pd.DataFrame(department_data))
+        print(f"Finished scanning {department['name']}")
+
+        # departments sale items appended together
+        data_frames.append(pd.DataFrame(department_products))
 
     df = pd.concat(data_frames)
-    kohls_csv = f'kohls_clearance_{date_string}.csv'
-    df.to_csv(kohls_csv, index=False)
+    kohls_clearance_csv = f'kohls_clearance_{date_string}.csv'
+    df.to_csv(kohls_clearance_csv, index=False)
 
     print('Scraping complete!')
-    return kohls_csv
+    return kohls_clearance_csv
 
 
-def send_email(kohls_csv):
+def send_email(kohls_clearance_csv):
     # Create message and set headers
     message = MIMEMultipart()
     message['From'] = sender_email
@@ -148,18 +150,18 @@ def send_email(kohls_csv):
     message['Subject'] = subject
 
     # Add body to email
-    message.attach(MIMEText(body, "plain"))
+    message.attach(MIMEText(email_body, "plain"))
 
     # Open the CSV file in bytestream mode and attach it to the email
-    with open(kohls_csv, 'rb') as f:
+    with open(kohls_clearance_csv, 'rb') as f:
         attach = MIMEApplication(f.read(), _subtype="csv")
-        attach.add_header('Content-Disposition', 'attachment', filename=kohls_csv)
+        attach.add_header('Content-Disposition', 'attachment', filename=kohls_clearance_csv)
         message.attach(attach)
 
     # Create SMTP session for sending the mail
     session = smtplib.SMTP('smtp.gmail.com', 587)
     session.starttls()
-    session.login(sender_email, password)
+    session.login(sender_email, email_password)
 
     # Convert the message to a string and send the mail
     text = message.as_string()
