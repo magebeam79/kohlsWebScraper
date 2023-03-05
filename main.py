@@ -1,52 +1,24 @@
 import requests
-import os
 from bs4 import BeautifulSoup
 import pandas as pd
 import time
 import datetime
 import smtplib
-from twilio.rest import Client
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email.mime.application import MIMEApplication
 from department_urls import departments
+from credentials import *
+from sms import send_sms_alert
 
 
-# Define Twilio parameters
-account_sid = os.environ.get('TWILIO_ACCOUNT_SID')
-auth_token = os.environ.get('TWILIO_AUTH_TOKEN')
-from_number = os.environ.get('TWILIO_PHONE_NUMBER')
-to_number = os.environ.get('PHONE_NUMBER')
-
-# Define email parameters
-sender_email = os.environ.get('EMAIL_ADDRESS')
-receiver_email = os.environ.get('RECEIVER_ADDRESS')
 subject = 'Kohls Clearance Data'
 body = 'Please find attached the Kohls Clearance data.'
-password = os.environ.get('SECRET_KEY')
 
 
 def main():
     kohls_csv = scrape_kohls()
     send_email(kohls_csv)
-
-
-def send_sms_alert(title, department_name, original_price, sale_price, percentage_discount):
-    # Create a Twilio client object
-    client = Client(account_sid, auth_token)
-
-    # Construct the message to send
-    message = f"New deal alert: {title} in {department_name} is now {percentage_discount}% off! " \
-              f"Original price: {original_price}, sale price: {sale_price}."
-
-    # Send the message
-    message = client.messages.create(
-        body=message,
-        from_=from_number,
-        to=to_number
-    )
-
-    print(f"SMS sent: {message.sid}")
 
 
 def scrape_kohls():
@@ -99,7 +71,7 @@ def scrape_kohls():
                 if percentage_discount >= 70:
                     orig_price_formatted = "${:.2f}".format(original_price)
                     sale_price_formatted = "${:.2f}".format(sale_price)
-                    discount_formatted = "{:.0%}".format(percentage_discount)
+                    discount_formatted = "{:.0%}".format(percentage_discount/100)
                     data_dict = {'Department': department['name'],
                                  'Product Name': title,
                                  'Orig Price': orig_price_formatted,
