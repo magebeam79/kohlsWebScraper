@@ -1,38 +1,19 @@
 import requests
-import os
 from bs4 import BeautifulSoup
 import pandas as pd
 import time
 import datetime
 import smtplib
-from twilio.rest import Client
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email.mime.application import MIMEApplication
+from department_urls import departments
+from credentials import *
+from sms import send_sms_alert
 
 
-departments = [
-    {'name': 'accessories', 'url': 'https://www.kohls.com/catalog/clearance-accessories.jsp?CN=Promotions:Clearance+Department:Accessories&kls_sbp=90595572255358814293312850185484413129&pfm=browse%20refine&PPP=48&S=7&sks=true'},
-    {'name': 'beauty', 'url': 'https://www.kohls.com/catalog/clearance-beauty.jsp?CN=Promotions:Clearance+Department:Beauty&kls_sbp=90595572255358814293312850185484413129&pfm=browse%20refine&PPP=48&S=7&sks=true'},
-    {'name': 'bed-bath', 'url': 'https://www.kohls.com/catalog/clearance-bed-bath.jsp?CN=Promotions:Clearance+Department:Bed%20%26%20Bath&pfm=browse%20refine&kls_sbp=90595572255358814293312850185484413129&PPP=48&S=7&sks=true'},
-    {'name': 'health', 'url': 'https://www.kohls.com/catalog/clearance-health-personal-care.jsp?CN=Promotions:Clearance+Department:Health%20%26%20Personal%20Care&pfm=browse%20refine&kls_sbp=90595572255358814293312850185484413129&PPP=48&S=7&sks=true'},
-    {'name': 'home', 'url': 'https://www.kohls.com/catalog/clearance-home-decor.jsp?CN=Promotions:Clearance+Department:Home%20Decor&kls_sbp=90595572255358814293312850185484413129&pfm=browse%20refine&PPP=48&S=7&sks=true'},
-    {'name': 'kitchen', 'url': 'https://www.kohls.com/catalog/clearance-kitchen-dining.jsp?CN=Promotions:Clearance+Department:Kitchen%20%26%20Dining&pfm=browse%20refine&kls_sbp=90595572255358814293312850185484413129&PPP=48&S=7&sks=true'},
-    {'name': 'sports', 'url': 'https://www.kohls.com/catalog/clearance-sports-fitness.jsp?CN=Promotions:Clearance+Department:Sports%20%26%20Fitness&pfm=browse%20refine&kls_sbp=90595572255358814293312850185484413129&PPP=48&S=7&sks=true'},
-    {'name': 'shoes', 'url': 'https://www.kohls.com/catalog/clearance-shoes.jsp?CN=Promotions:Clearance+Department:Shoes&kls_sbp=90595572255358814293312850185484413129&pfm=browse%20refine&PPP=48&S=7&sks=true'},
-    {'name': 'toys', 'url': 'https://www.kohls.com/catalog/sale-toys.jsp?CN=Promotions:Clearance+Promotions:Sale+Department:Toys&BL=y&pfm=browse%20refine&kls_sbp=05834574949241830242529155580587980870&PPP=48&S=7&sks=true'},
-]
-
-# Define Twilio parameters
-account_sid = os.environ.get('TWILIO_ACCOUNT_SID')
-auth_token = os.environ.get('TWILIO_AUTH_TOKEN')
-from_number = os.environ.get('TWILIO_PHONE_NUMBER')
-to_number = os.environ.get('PHONE_NUMBER')
-
-# Define email parameters
-sender_email = os.environ.get('EMAIL_ADDRESS')
-receiver_email = os.environ.get('RECEIVER_ADDRESS')
 subject = 'Kohls Clearance Data'
+body = 'Please find attached the Kohls Clearance data.'
 email_body = 'Please find attached the Kohls Clearance data.'
 email_password = os.environ.get('SECRET_KEY')
 
@@ -40,24 +21,6 @@ email_password = os.environ.get('SECRET_KEY')
 def main():
     kohls_clearance_csv = scrape_kohls()
     send_email(kohls_clearance_csv)
-
-
-def send_sms_alert(title, department_name, original_price, sale_price, percentage_discount):
-    # Create a Twilio client object
-    client = Client(account_sid, auth_token)
-
-    # Construct the message to send
-    sms_message = f"New deal alert: {title} in {department_name} is now {percentage_discount}% off! " \
-                  f"Original price: {original_price}, sale price: {sale_price}."
-
-    # Send the message
-    message = client.messages.create(
-        body=sms_message,
-        from_=from_number,
-        to=to_number
-    )
-
-    print(f"SMS sent: {message.sid}")
 
 
 def scrape_kohls():
