@@ -10,4 +10,4 @@ to_number = os.environ.get('PHONE_NUMBER')
 # Define email parameters
 sender_email = os.environ.get('EMAIL_ADDRESS')
 receiver_email = os.environ.get('RECEIVER_ADDRESS')
-password = os.environ.get('SECRET_KEY')
+email_password = os.environ.get('SECRET_KEY')

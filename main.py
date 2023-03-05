@@ -13,9 +13,7 @@ from sms import send_sms_alert
 
 
 subject = 'Kohls Clearance Data'
-body = 'Please find attached the Kohls Clearance data.'
 email_body = 'Please find attached the Kohls Clearance data.'
-email_password = os.environ.get('SECRET_KEY')
 
 
 def main():
